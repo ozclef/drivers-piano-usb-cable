@@ -1,0 +1,77 @@
+; Copyright (C)2012 CASIO COMPUTER CO.,LTD.
+;
+; Installation inf for the CASIO USB MIDI device driver x64
+;
+
+[Version]
+Signature="$Windows NT$"
+Class=MEDIA
+ClassGUID={4d36e96c-e325-11ce-bfc1-08002be10318}
+provider=%CASIO%
+CatalogFile=ccusbx64.cat
+DriverVer=02/24/2012,1.00.00.0004
+
+;--------------------------------------------------------------------;
+
+[DestinationDirs]
+DefaultDestDir   = 11	; LDID_SYS
+CCUSBMIDI.Files.Ext = 10,System32\Drivers
+
+[SourceDisksNames]
+1=%CCUSBMIDI.SourceDesc%,,,
+
+[SourceDisksFiles]
+ccusbmid.sys = 1,,
+
+;--------------------------------------------------------------------;
+
+[Manufacturer]
+%MfgName%=Casio,NTamd64
+
+[Casio.NTamd64]
+%USB\VID_07cf&PID_6802.DeviceDesc%=CCUSBMIDI.Dev, USB\VID_07cf&PID_6802, USB\VID_07cf&PID_6801
+
+;--------------------------------------------------------------------;
+
+[CCUSBMIDI.Dev.NT]
+Include = ks.inf, wdmaudio.inf
+Needs = KS.Registration, WDMAUDIO.Registration
+CopyFiles=CCUSBMIDI.Files.Ext
+AddReg=CCUSBMIDI.NT.AddReg
+
+[CCUSBMIDI.Dev.NT.Services]
+Addservice = CCUSBMIDI, 0x00000002, CCUSBMIDI.AddService
+
+[CCUSBMIDI.AddService]
+DisplayName    = %CCUSBMIDI.SvcDesc%
+ServiceType    = 1                  ; SERVICE_KERNEL_DRIVER
+StartType      = 3                  ; SERVICE_DEMAND_START
+ErrorControl   = 1                  ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %10%\System32\Drivers\ccusbmid.sys
+
+;--------------------------------------------------------------------;
+
+[CCUSBMIDI.NT.AddReg]
+HKR,,DevLoader,,*ntkern
+HKR,,AssociatedFilters,,"wdmaud,swmidi,redbook"
+HKR,,Driver,,ccusbmid.sys
+HKR,,NTMPDriver,,"ccusbmid.sys,sbemul.sys"
+
+HKR,Drivers,SubClasses,,"midi"
+
+HKR,Drivers\midi\wdmaud.drv,Driver,,wdmaud.drv
+HKR,Drivers\midi\wdmaud.drv,Description,,%WDM_MIDI%
+
+[CCUSBMIDI.Files.Ext]
+ccusbmid.sys
+
+;---------------------------------------------------------------;
+
+[Strings]
+CASIO="CASIO"
+MfgName="CASIO COMPUTER CO.,LTD."
+USB\VID_07cf&PID_6802.DeviceDesc="CASIO USB MIDI"
+CCUSBMIDI.SvcDesc="CASIO USB MIDI"
+CCUSBMIDI.SourceDesc="CASIO USB MIDI Installation Disk"
+WDM_MIDI="CASIO USB MIDI(WDM)"
+
